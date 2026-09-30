@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pesquisa — Urnas eletrônicas</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5fb;--card:#fff;--ink:#14203a;--mute:#5a6a88;--line:#d8e2f2;--accent:#1f5fd1;--accent2:#e3b23c;--soft:#e1ebfa;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1424;--card:#141f36;--ink:#e8eefa;--mute:#9fb0d0;--line:#24365a;--accent:#6fa3ff;--accent2:#e3b23c;--soft:#1b2b4d}}
+:root[data-theme="dark"]{--bg:#0c1424;--card:#141f36;--ink:#e8eefa;--mute:#9fb0d0;--line:#24365a;--accent:#6fa3ff;--accent2:#e3b23c;--soft:#1b2b4d}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px 60px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;align-items:center;padding-bottom:0}
+nav b{font:800 18px Fraunces,Georgia,serif;margin-right:auto;padding:14px 0}
+nav a{text-decoration:none;display:inline-block;background:none;border:0;border-bottom:3px solid transparent;color:var(--mute);font:600 15px Inter,sans-serif;padding:16px 12px;cursor:pointer}
+nav a.on{color:var(--accent);border-color:var(--accent)}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.hero{padding:44px 0 24px}
+h1{font:800 clamp(30px,6vw,52px)/1.1 Fraunces,Georgia,serif;margin:0 0 14px;max-width:16em}
+h2{font:600 24px Fraunces,Georgia,serif;margin:0 0 6px}
+.lead{color:var(--mute);max-width:40em;margin:0}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:26px 0;padding:14px 16px;background:var(--soft);border-radius:12px}
+.filters label{font-weight:600;font-size:14px}
+select{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+#cnt{margin-left:auto;color:var(--mute);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:30px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat b{display:block;font:800 34px Fraunces,Georgia,serif;color:var(--accent)}
+.stat span{font-size:13px;color:var(--mute)}
+.q{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
+.q p{color:var(--mute);margin:0 0 16px;font-size:14px}
+.bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 70px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+.bar .t{height:26px;background:var(--soft);border-radius:6px;overflow:hidden}
+.bar .f{height:100%;background:var(--accent);border-radius:6px;width:0;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bar.top .f{background:var(--accent2)}
+.bar .n{font-weight:600;text-align:right}
+.bar .l{text-align:right}
+.note{border-left:4px solid var(--accent2);background:var(--card);padding:14px 18px;border-radius:0 12px 12px 0;font-size:14px;color:var(--mute);margin:28px 0}
+.who{width:100%;border-collapse:collapse;font-size:14px}
+.who th,.who td{padding:9px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.who tr{cursor:pointer}.who tr:hover td{background:var(--soft)}
+.tabw{overflow-x:auto}
+/* pesquisa */
+.mode{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:26px 0}
+.qs{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
+.qs h3{font:600 18px Fraunces,Georgia,serif;margin:0 0 14px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 14px;font:500 14px Inter,sans-serif;cursor:pointer;text-align:left}
+.opt.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.lock{cursor:default}
+.opt small{opacity:.8;margin-left:6px}
+.scale .opt{min-width:44px;text-align:center;border-radius:10px}
+.hint{font-size:13px;color:var(--mute);margin-top:10px;min-height:1em}
+.ghost{background:none;border:1.5px solid var(--line);color:var(--ink);border-radius:8px;padding:8px 12px;font:600 14px Inter,sans-serif;cursor:pointer}
+
+@media (max-width:600px){.bar{grid-template-columns:1fr 60px;}.bar .t{grid-column:1/-1;grid-row:2}.bar .l{text-align:left}}
+@media (prefers-reduced-motion:reduce){.bar .f{transition:none}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>Urnas na sala de aula</b>
+<a href="index.html">Relatório</a>
+<a href="pesquisa.html" class="on">Pesquisa</a></div></nav>
+<main class="wrap">
+<div class="hero"><h1>A pesquisa</h1>
+<p class="lead">São as cinco perguntas aplicadas. Veja as respostas marcadas por cada participante ou responda você mesmo e compare com a turma.</p></div>
+<div class="mode"><label for="pp"><b>Ver:</b></label>
+<select id="pp"></select><button class="ghost" id="clr">Limpar minhas respostas</button></div>
+<div id="form"></div>
+</main>
+<script>
+const P=[
+{g:"Feminino",i:17,c:"Saneamento",t:"Saneamento — 6º período",a:[10,"n","e","n","n"]},
+{g:"Masculino",i:18,c:"Informática",t:"Informática — 8º período",a:[7,"i","h","r","a"]},
+{g:"Masculino",i:15,c:"Informática",t:"Informática — 2º período",a:[7,"n","t","n","n"]},
+{g:"Feminino",i:16,c:"Saneamento",t:"Saneamento — 2º período",a:[6,"n","h","r","n"]},
+{g:"Feminino",i:17,c:"Saneamento",t:"Saneamento — 4º período",a:[8,"s","f","o","a"]}];
+const Q=[
+{k:"Confiança",q:"Em uma escala de 0 a 10, qual é o seu nível de confiança na segurança das urnas eletrônicas utilizadas nas eleições brasileiras? (0 = nenhuma, 10 = total)",scale:1,o:[...Array(11).keys()].map(n=>[n,String(n)])},
+{k:"Testes de segurança",q:"Os testes de segurança feitos pelas instituições eleitorais (como o Teste Público de Segurança) são suficientes para garantir a confiabilidade das urnas?",o:[["s","Sim, são suficientes"],["i","Não, são insuficientes"],["n","Não tenho conhecimento suficiente para opinar"]]},
+{k:"Maior risco",q:"Qual fator você considera o maior risco para a segurança do processo eleitoral com urnas eletrônicas?",o:[["f","Falhas no software ou hardware"],["h","Hackers ou invasões externas"],["e","Erro humano na operação"],["t","Falta de transparência no código-fonte e nos processos"],["x","Não sei avaliar"]]},
+{k:"Busca de informação",q:"Com que frequência você busca informações sobre o funcionamento e a segurança das urnas em fontes confiáveis?",o:[["f","Frequentemente"],["o","Ocasionalmente"],["r","Raramente"],["n","Nunca"]]},
+{k:"Experiência de votação",q:"Ter presenciado (ou não) uma votação com urna eletrônica influenciou a sua percepção sobre a confiabilidade do sistema?",o:[["a","Sim, aumentou minha confiança"],["d","Sim, diminuiu minha confiança"],["x","Não influenciou"],["n","Nunca presenciei uma votação"]]}];
+const $=id=>document.getElementById(id);
+const mine={};
+function renderForm(){
+ const v=$("pp").value,lock=v!=="";
+ $("form").innerHTML=Q.map((q,i)=>{
+  const sel=lock?P[v].a[i]:mine[i];
+  return `<div class="qs"><h3>${i+1}. ${q.q}</h3><div class="opts${q.scale?" scale":""}">`+q.o.map(x=>{
+   const share=P.filter(p=>p.a[i]==x[0]).length,pc=Math.round(share/5*100);
+   const show=!lock&&mine[i]!==undefined;
+   return `<button class="opt${sel==x[0]?" sel":""}${lock?" lock":""}" ${lock?"disabled":`data-q="${i}" data-v="${x[0]}"`}>${x[1]}${show?`<small>${pc}%</small>`:""}</button>`}).join("")+`</div><div class="hint">${!lock&&mine[i]!==undefined?"A porcentagem mostra quantos dos 5 participantes marcaram cada opção.":lock?"":"Escolha uma opção para comparar com os participantes."}</div></div>`}).join("")}
+function pick(i,v){mine[i]=Q[i].scale?+v:v;renderForm()}
+function clearMine(){Object.keys(mine).forEach(k=>delete mine[k]);$("pp").value="";renderForm()}
+$("pp").innerHTML='<option value="">Responder como eu</option>'+P.map((p,i)=>`<option value="${i}">Participante ${i+1} — ${p.g}, ${p.i} anos, ${p.t}</option>`).join("");
+const par=new URLSearchParams(location.search).get("p");if(par!==null&&P[+par])$("pp").value=par;
+$("pp").onchange=renderForm;$("clr").onclick=clearMine;
+$("form").addEventListener("click",e=>{const b=e.target.closest("button[data-q]");if(b)pick(+b.dataset.q,b.dataset.v)});
+renderForm();
+</script>
+</body>
+</html>
