@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Urnas eletrônicas: o que pensam os alunos</title>
+<title>Urnas eletrônicas: o que pensam os alunos (Copy)</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f1f5fb;--card:#fff;--ink:#14203a;--mute:#5a6a88;--line:#d8e2f2;--accent:#1f5fd1;--accent2:#e3b23c;--soft:#e1ebfa;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -63,13 +63,13 @@ select{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--li
 </head>
 <body>
 <nav><div class="wrap"><b>Urnas na sala de aula</b>
-<button id="b1" class="on" onclick="go(1)">Relatório</button>
-<button id="b2" onclick="go(2)">Pesquisa</button></div></nav>
+<button id="b1" class="on">Relatório</button>
+<button id="b2">Pesquisa</button></div></nav>
 
 <main class="wrap">
 <section id="v1" class="view on">
 <div class="hero"><h1>Os alunos confiam nas urnas, mas poucos foram se informar</h1>
-<p class="lead">Cinco estudantes de 15 a 18 anos, dos cursos de Informática e Saneamento do IFPE campus Afogados da Ingazeira, responderam a cinco perguntas sobre a segurança das urnas eletrônicas brasileiras. Use os filtros para comparar os grupos.</p></div>
+<p class="lead">Cinco estudantes de 15 a 18 anos, dos cursos de Informática e Saneamento, responderam a cinco perguntas sobre a segurança das urnas eletrônicas brasileiras. Use os filtros para comparar os grupos.</p></div>
 <div class="filters">
 <label for="fg">Gênero</label><select id="fg"><option value="">Todos</option><option>Feminino</option><option>Masculino</option></select>
 <label for="fc">Curso</label><select id="fc"><option value="">Todos</option><option>Informática</option><option>Saneamento</option></select>
@@ -79,16 +79,14 @@ select{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--li
 <h2 style="margin-top:34px">Participantes</h2>
 <p class="lead" style="margin-bottom:12px">Clique em uma linha para ver as respostas dessa pessoa na página Pesquisa.</p>
 <div class="tabw"><table class="who"><thead><tr><th>Nº</th><th>Gênero</th><th>Idade</th><th>Turma</th><th>Confiança</th></tr></thead><tbody id="rows"></tbody></table></div>
-<div class="note"><strong><span>Equipe responsável pela pesquisa:</span>
-<p>Lázaro Tenório de Oliveira</p>
-<p>Elizabete Silva Ferreira</p>
-<p>Maria Vitória Torres</p>
-</strong></div>
+<div class="note"><strong>Observação metodológica:</strong> os resultados representam apenas os cinco participantes. Com uma amostra tão pequena, os dados servem como descrição e não como retrato estatístico da população.</div>
+</section>
+
 <section id="v2" class="view">
 <div class="hero"><h1>A pesquisa</h1>
 <p class="lead">São as cinco perguntas aplicadas. Veja as respostas marcadas por cada participante ou responda você mesmo e compare com a turma.</p></div>
 <div class="mode"><label for="pp"><b>Ver:</b></label>
-<select id="pp"></select><button class="ghost" onclick="clearMine()">Limpar minhas respostas</button></div>
+<select id="pp"></select><button class="ghost" id="clr">Limpar minhas respostas</button></div>
 <div id="form"></div>
 </section>
 </main>
@@ -112,7 +110,7 @@ function go(n){[1,2].forEach(i=>{$("v"+i).classList.toggle("on",i==n);$("b"+i).c
 function render(){
  const g=$("fg").value,c=$("fc").value,D=P.filter(p=>(!g||p.g==g)&&(!c||p.c==c));
  $("cnt").textContent=D.length+" de 5 participantes";
- if(!D.length){$("stats").innerHTML="";$("charts").innerHTML='<div class="q"><h2>Nenhum participante neste grupo</h2><p>Troque o gênero ou o curso para ver resultados.</p></div>';rows();return}
+ if(!D.length){$("stats").innerHTML="";$("charts").innerHTML='<div class="q"><h2>Nenhum participante neste grupo</h2><p>Troque o gênero ou o curso para ver resultados.</p></div>';renderRows();return}
  const s=D.map(p=>p.a[0]).sort((a,b)=>a-b),avg=s.reduce((x,y)=>x+y,0)/s.length,med=s.length%2?s[(s.length-1)/2]:(s[s.length/2-1]+s[s.length/2])/2;
  const f=x=>String(+x.toFixed(1)).replace(".",",");
  $("stats").innerHTML=[[f(avg),"média de confiança"],[f(med),"mediana"],[s[0]+" a "+s[s.length-1],"menor e maior nota"],[Math.round(D.filter(p=>["n","r"].includes(p.a[3])).length/D.length*100)+"%","nunca ou raramente buscam informação"]].map(x=>`<div class="stat"><b>${x[0]}</b><span>${x[1]}</span></div>`).join("");
@@ -121,24 +119,28 @@ function render(){
   const cn=o.map(x=>D.filter(p=>p.a[i]==x[0]).length),mx=Math.max(...cn);
   return `<div class="q"><h2>${q.k}</h2><p>${q.q}</p>`+o.map((x,j)=>`<div class="bar${cn[j]==mx&&mx>0?" top":""}"><div class="l">${q.scale?"Nota "+x[1]:x[1]}</div><div class="t"><div class="f" data-w="${cn[j]/D.length*100}"></div></div><div class="n">${cn[j]} (${Math.round(cn[j]/D.length*100)}%)</div></div>`).join("")+`</div>`}).join("");
  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".f").forEach(e=>e.style.width=e.dataset.w+"%")));
- rows()}
-function rows(){$("rows").innerHTML=P.map((p,i)=>`<tr tabindex="0" onclick="see(${i})" onkeydown="if(event.key=='Enter')see(${i})"><td>${i+1}</td><td>${p.g}</td><td>${p.i}</td><td>${p.t}</td><td>${p.a[0]}</td></tr>`).join("")}
-function see(i){$("pp").value=i;go(2);form()}
+ renderRows()}
+function renderRows(){$("rows").innerHTML=P.map((p,i)=>`<tr tabindex="0" data-i="${i}"><td>${i+1}</td><td>${p.g}</td><td>${p.i}</td><td>${p.t}</td><td>${p.a[0]}</td></tr>`).join("")}
+function see(i){$("pp").value=i;go(2);renderForm()}
 
 const mine={};
-function form(){
+function renderForm(){
  const v=$("pp").value,lock=v!=="";
  $("form").innerHTML=Q.map((q,i)=>{
-  const pick=lock?P[v].a[i]:mine[i];
+  const sel=lock?P[v].a[i]:mine[i];
   return `<div class="qs"><h3>${i+1}. ${q.q}</h3><div class="opts${q.scale?" scale":""}">`+q.o.map(x=>{
    const share=P.filter(p=>p.a[i]==x[0]).length,pc=Math.round(share/5*100);
    const show=!lock&&mine[i]!==undefined;
-   return `<button class="opt${pick==x[0]?" sel":""}${lock?" lock":""}" ${lock?"disabled":`onclick="pick(${i},'${x[0]}')"`}>${x[1]}${show?`<small>${pc}%</small>`:""}</button>`}).join("")+`</div><div class="hint">${!lock&&mine[i]!==undefined?"A porcentagem mostra quantos dos 5 participantes marcaram cada opção.":lock?"":"Escolha uma opção para comparar com os participantes."}</div></div>`}).join("")}
-function pick(i,v){mine[i]=Q[i].scale?+v:v;form()}
-function clearMine(){Object.keys(mine).forEach(k=>delete mine[k]);$("pp").value="";form()}
+   return `<button class="opt${sel==x[0]?" sel":""}${lock?" lock":""}" ${lock?"disabled":`data-q="${i}" data-v="${x[0]}"`}>${x[1]}${show?`<small>${pc}%</small>`:""}</button>`}).join("")+`</div><div class="hint">${!lock&&mine[i]!==undefined?"A porcentagem mostra quantos dos 5 participantes marcaram cada opção.":lock?"":"Escolha uma opção para comparar com os participantes."}</div></div>`}).join("")}
+function pick(i,v){mine[i]=Q[i].scale?+v:v;renderForm()}
+function clearMine(){Object.keys(mine).forEach(k=>delete mine[k]);$("pp").value="";renderForm()}
 $("pp").innerHTML='<option value="">Responder como eu</option>'+P.map((p,i)=>`<option value="${i}">Participante ${i+1} — ${p.g}, ${p.i} anos, ${p.t}</option>`).join("");
-$("pp").onchange=form;$("fg").onchange=render;$("fc").onchange=render;
-render();form();
+$("pp").onchange=renderForm;$("fg").onchange=render;$("fc").onchange=render;
+$("b1").onclick=()=>go(1);$("b2").onclick=()=>go(2);$("clr").onclick=clearMine;
+$("rows").addEventListener("click",e=>{const r=e.target.closest("tr[data-i]");if(r)see(+r.dataset.i)});
+$("rows").addEventListener("keydown",e=>{const r=e.target.closest("tr[data-i]");if(r&&e.key=="Enter")see(+r.dataset.i)});
+$("form").addEventListener("click",e=>{const b=e.target.closest("button[data-q]");if(b)pick(+b.dataset.q,b.dataset.v)});
+render();renderForm();
 </script>
 </body>
 </html>
